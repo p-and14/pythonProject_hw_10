@@ -6,42 +6,25 @@ app = Flask(__name__)
 
 @app.route("/")
 def page_index():
-    withdraws_all_candidates()
-    return withdraws_all_candidates()
+    candidates_list = import_candidates("candidates.json")
+
+    return withdraws_candidates(candidates_list)
 
 
 @app.route("/candidates/<int:uid>")
 def candidates(uid):
-    """
-    <img src="(ссылка на картинку)">
-    <pre>
-      Имя кандидата -
-      Позиция кандидата
-      Навыки через запятую
-    </pre>
-    """
-    candidates = import_candidates()
-    return f"Профиль пользователя {candidates[uid]}"
+    candidates_list = import_candidates("candidates.json")
+    candidate = search_candidate_id(candidates_list, uid)
+
+    return f'<img src={candidate[0]["picture"]}\n>' + withdraws_candidates(candidate)
 
 
-# @app.route("/feed/")
-# def page_feed():
-#     return "Лента пользователя"
-#
-#
-# @app.route("/messages/")
-# def page_messages():
-#     return "Сообщения пользователя"
-#
-#
-# @app.route('/users/<uid>')
-# def profile(uid):
-#     return f'<h1>Профиль {uid}</h1>'
-#
-#
-# @app.route('/catalog/items/<itemid>')
-# def catalog(itemid):
-#     return f'<h1>Страничка товара {itemid}</h1>'
-#
-#
+@app.route("/skills/<skill>")
+def skills(skill):
+    candidates_list = import_candidates("candidates.json")
+    candidates_with_skill = search_skills(candidates_list, skill)
+
+    return withdraws_candidates(candidates_with_skill)
+
+
 app.run()
